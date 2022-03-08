@@ -61,7 +61,24 @@ public class PersonService {
     public void delete(Long id) throws PersonNotFoundException {
         // Usar pesquisa dessa outra forma
         personRepository.findById(id).orElseThrow(()-> new PersonNotFoundException(id));
-
         personRepository.deleteById(id);
     }
+
+    public MessageResponseDTO updateByID(Long id, PersonDTO personDTO) throws PersonNotFoundException {
+        verifyIfExists(id);
+
+        Person personToUpdate = personMapper.toModel(personDTO);
+        Person savedPerson = personRepository.save(personToUpdate);
+
+        return MessageResponseDTO
+                .builder()
+                .message("Updated person with ID" + savedPerson.getId())
+                .build();
+    }
+
+    private void verifyIfExists(Long id) throws PersonNotFoundException {
+        personRepository.findById(id).orElseThrow(()-> new PersonNotFoundException(id));
+    }
+
+
 }
